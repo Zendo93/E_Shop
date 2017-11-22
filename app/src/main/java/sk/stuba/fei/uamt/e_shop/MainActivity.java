@@ -83,11 +83,12 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        /*if (id == R.id.nav_registration) {
+        if (id == R.id.nav_registration) {
 
         } else if (id == R.id.nav_signIn) {
-
-        }*/
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
