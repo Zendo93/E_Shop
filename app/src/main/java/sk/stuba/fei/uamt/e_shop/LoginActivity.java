@@ -3,7 +3,9 @@ package sk.stuba.fei.uamt.e_shop;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +69,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    private CredentialsAPIService apiService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,22 +100,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
-    }
-
-    private void fetchCredentials(String action, String email, String password){
-        Call<Credentials> call = apiService.fetchCredentials(action,email, password);
-        call.enqueue(new Callback<Credentials>() {
-            @Override
-            public void onResponse(Call<Credentials> call, Response<Credentials> response) {
-                Log.d("email", response.body().getEmail());
-            }
-
-            @Override
-            public void onFailure(Call<Credentials> call, Throwable t) {
-                Log.e("error", "Got error : " + t.getLocalizedMessage());
-            }
-        });
 
     }
 
@@ -316,10 +303,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Credentials, Credentials> {
 
         private final String mEmail;
         private final String mPassword;
+        private CredentialsAPIService apiService;
+        private Credentials credentials;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -327,35 +316,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Credentials doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-            apiService = RestClient.getClient().create(CredentialsAPIService.class);
-            fetchCredentials("login", mEmail, mPassword);
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
+                apiService = RestClient.getClient().create(CredentialsAPIService.class);
+                 credentials = fetchCredentials("login", mEmail, mPassword);
+            } catch (Exception e) {
+                return null;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
+            return credentials;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final Credentials credentials) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
+            if (credentials != null) {
+                Intent data = new Intent();
+                data.putExtra("name", credentials.getName() + " " + credentials.getSurname());
+                data.putExtra("email", credentials.getEmail());
+                setResult(RESULT_OK, data);
                 finish();
             } else {
                 mPasswordView.requestFocus();
@@ -366,6 +348,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onCancelled() {
             mAuthTask = null;
             showProgress(false);
+        }
+
+        private Credentials fetchCredentials(String action, String email, String password) throws IOException {
+            Call<Credentials> call = apiService.fetchCredentials(action,email, password);
+            return call.execute().body();
         }
     }
 }

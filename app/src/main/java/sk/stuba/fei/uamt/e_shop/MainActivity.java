@@ -1,6 +1,7 @@
 package sk.stuba.fei.uamt.e_shop;
 
 import android.app.SearchManager;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,14 +18,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    final int REQUEST_CODE_LOGIN = 1;
+    UIChanger uiChanger;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -36,7 +41,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         handleIntent(getIntent());
+        uiChanger = new UIChanger(navigationView);
     }
 
     @Override
@@ -87,7 +94,9 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_signIn) {
             Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, REQUEST_CODE_LOGIN);
+        } else if ( id == R.id.nav_sign_out){
+            uiChanger.changeUISignout();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -106,6 +115,15 @@ public class MainActivity extends AppCompatActivity
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //use the query to search your data somehow
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_LOGIN) {
+            if (data.hasExtra("name") && data.hasExtra("email")) {
+               uiChanger.changeUISignIn(data);
+            }
         }
     }
 }
