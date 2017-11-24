@@ -7,12 +7,19 @@
     <string name="action_settings">Settings</string>
     <string name="search_title">Search</string>
     <string name="search_hint">Hľadaj</string>
-    <string name="title_activity_login">Prihlásenie</string>
 
-    <!-- Strings related to login -->
+    <!-- Strings related to login and registration -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Heslo</string>
-    <string name="action_sign_in">Prihlás sa</string>
+    <string name="prompt_surname">Meno</string>
+    <string name="prompt_lastname">Priezvisko</string>
+    <string name="prompt_country">Krajina</string>
+    <string name="prompt_house_number">Číslo domu</string>
+    <string name="prompt_psc">PSČ</string>
+    <string name="prompt_street">Ulica</string>
+    <string name="prompt_city">Mesto</string>
+    <string name="action_sign_in">Prihlásenie</string>
+    <string name="action_register">Registrácia</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">Táto emailová adresa je neplatná</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -20,4 +27,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="error_incorrect_password">Nesprávne heslo</string>
+    <string name="title_activity_registration">Registrácia</string>
+    <string name="title_activity_login">Prihlásenie</string>
 </resources>

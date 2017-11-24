@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     final int REQUEST_CODE_LOGIN = 1;
+    final int REQUEST_CODE_REGISTRATION = 2;
     UIChanger uiChanger;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_registration) {
-
+            Intent intent = new Intent(this, RegistrationActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_REGISTRATION);
         } else if (id == R.id.nav_signIn) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, REQUEST_CODE_LOGIN);
