@@ -126,6 +126,10 @@ public class MainActivity extends AppCompatActivity
             if (data.hasExtra("name") && data.hasExtra("email")) {
                uiChanger.changeUISignIn(data);
             }
+        } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_REGISTRATION){
+            if (data.hasExtra("name") && data.hasExtra("email")) {
+                uiChanger.changeUISignIn(data);
+            }
         }
     }
 }

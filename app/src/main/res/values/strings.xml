@@ -11,7 +11,7 @@
     <!-- Strings related to login and registration -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Heslo</string>
-    <string name="prompt_surname">Meno</string>
+    <string name="prompt_firstname">Meno</string>
     <string name="prompt_lastname">Priezvisko</string>
     <string name="prompt_country">Krajina</string>
     <string name="prompt_house_number">Číslo domu</string>
@@ -30,4 +30,5 @@
     <string name="error_incorrect_password">Nesprávne heslo</string>
     <string name="title_activity_registration">Registrácia</string>
     <string name="title_activity_login">Prihlásenie</string>
+    <string name="timeout_warning">Operácia sa nepodarila. Skontrolujte si svoje internetové pripojenie</string>
 </resources>

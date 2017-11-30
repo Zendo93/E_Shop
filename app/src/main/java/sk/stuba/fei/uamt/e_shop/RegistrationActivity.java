@@ -3,6 +3,7 @@ package sk.stuba.fei.uamt.e_shop;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -19,18 +20,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -54,13 +56,19 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+    private UserRegisterTask mRegisterTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
+    private EditText mFirstNameView;
+    private EditText mLastNameView;
+    private EditText mHouseNumberView;
+    private EditText mStreetView;
+    private EditText mCityView;
+    private EditText mCountryView;
     private View mProgressView;
-    private View mLoginFormView;
+    private View mRegisterFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,27 +79,23 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
+        mFirstNameView = (EditText) findViewById(R.id.user_firstname);
+        mLastNameView = (EditText) findViewById(R.id.user_lastname);
+        mCityView = (EditText) findViewById(R.id.user_city);
+        mCountryView = (EditText) findViewById(R.id.user_country);
+        mStreetView = (EditText) findViewById(R.id.user_street);
+        mHouseNumberView = (EditText) findViewById(R.id.user_house_number);
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        Button mEmailRegisterButton = (Button) findViewById(R.id.email_register_button);
+        mEmailRegisterButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                attemptRegister();
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        mRegisterFormView = findViewById(R.id.register_form);
+        mProgressView = findViewById(R.id.register_progress);
     }
 
     private void populateAutoComplete() {
@@ -143,18 +147,30 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
-        if (mAuthTask != null) {
+    private void attemptRegister() {
+        if (mRegisterTask != null) {
             return;
         }
 
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
+        mFirstNameView.setError(null);
+        mLastNameView.setError(null);
+        mCityView.setError(null);
+        mCountryView.setError(null);
+        mHouseNumberView.setError(null);
+        mStreetView.setError(null);
 
-        // Store values at the time of the login attempt.
+        // Store values at the time of the register attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String firstName = mFirstNameView.getText().toString();
+        String lastName = mLastNameView.getText().toString();
+        String city = mCityView.getText().toString();
+        String country = mCountryView.getText().toString();
+        String houseNumber = mHouseNumberView.getText().toString();
+        String street = mStreetView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -175,6 +191,30 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
+        } else if (firstName.isEmpty()){
+            mCityView.setError(getString(R.string.error_field_required));
+            focusView = mCityView;
+            cancel = true;
+        } else if ( lastName.isEmpty()){
+            mFirstNameView.setError(getString(R.string.error_field_required));
+            focusView = mFirstNameView;
+            cancel = true;
+        } else if ( houseNumber.isEmpty()){
+            mLastNameView.setError(getString(R.string.error_field_required));
+            focusView = mLastNameView;
+            cancel = true;
+        } else if ( street.isEmpty()){
+            mCountryView.setError(getString(R.string.error_field_required));
+            focusView = mCountryView;
+            cancel = true;
+        } else if ( city.isEmpty()){
+            mHouseNumberView.setError(getString(R.string.error_field_required));
+            focusView = mHouseNumberView;
+            cancel = true;
+        }else if ( country.isEmpty()){
+            mStreetView.setError(getString(R.string.error_field_required));
+            focusView = mStreetView;
+            cancel = true;
         }
 
         if (cancel) {
@@ -185,8 +225,9 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            User user = new User(firstName,lastName,email,password,city,houseNumber,street,country);
+            mRegisterTask = new UserRegisterTask(user);
+            mRegisterTask.execute((Void) null);
         }
     }
 
@@ -211,12 +252,12 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+            mRegisterFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mRegisterFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    mRegisterFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -232,7 +273,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mRegisterFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -294,14 +335,13 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
+        private final User user;
+        private CredentialsAPIService apiService;
+        private Credentials credentials;
+        UserRegisterTask(User user) {
+            this.user = user;
         }
 
         @Override
@@ -309,18 +349,17 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
             // TODO: attempt authentication against a network service.
 
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+                if (user == null)
+                {
+                    return false;
                 }
+                else{
+                apiService = RestClient.getClient().create(CredentialsAPIService.class);
+                credentials = registerUser("registration", user);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return  false;
             }
 
             // TODO: register the new account here.
@@ -329,21 +368,30 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
+            mRegisterTask = null;
             showProgress(false);
 
-            if (success) {
+            if (credentials != null) {
+                Intent data = new Intent();
+                data.putExtra("name", credentials.getName() + " " + credentials.getSurname());
+                data.putExtra("email", credentials.getEmail());
+                setResult(RESULT_OK, data);
                 finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                Toast toast = Toast.makeText(getApplicationContext(),R.string.timeout_warning,Toast.LENGTH_SHORT);
+                toast.show();
             }
         }
 
         @Override
         protected void onCancelled() {
-            mAuthTask = null;
+            mRegisterTask = null;
             showProgress(false);
+        }
+
+        private Credentials registerUser(String action, User user) throws IOException {
+            Call<Credentials> call = apiService.registerUser(action, user);
+            return call.execute().body();
         }
     }
 }
