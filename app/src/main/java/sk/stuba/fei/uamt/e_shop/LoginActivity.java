@@ -301,8 +301,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private Credentials credentials;
 
         UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
+            this.mEmail = email;
+            this.mPassword = password;
         }
 
         @Override
@@ -310,7 +310,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
             try {
                 apiService = RestClient.getClient().create(CredentialsAPIService.class);
-                 credentials = fetchCredentials("login", mEmail, mPassword);
+                User user = new User("login","","",this.mEmail,this.mPassword,"","","","");
+                 credentials = fetchCredentials(user);
             } catch (Exception e) {
                 return null;
             }
@@ -331,7 +332,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                mEmailView.setError("Nesprávny email");
             }
         }
 
@@ -341,8 +342,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
 
-        private Credentials fetchCredentials(String action, String email, String password) throws IOException {
-            Call<Credentials> call = apiService.fetchCredentials(action,email, password);
+        private Credentials fetchCredentials(User user) throws IOException {
+            Call<Credentials> call = apiService.fetchCredentials(user);
             return call.execute().body();
         }
     }

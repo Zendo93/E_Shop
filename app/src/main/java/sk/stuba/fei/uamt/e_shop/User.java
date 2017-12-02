@@ -5,7 +5,8 @@ package sk.stuba.fei.uamt.e_shop;
  */
 
 public class User {
-    private String firstmane;
+    private String action;
+    private String firstname;
     private String lastname;
     private String email;
     private String password;
@@ -14,8 +15,9 @@ public class User {
     private String street;
     private String country;
 
-    public User(String firstmane, String lastname, String email, String password, String city, String houseNumber, String street, String country) {
-        this.firstmane = firstmane;
+    public User(String action, String firstname, String lastname, String email, String password, String city, String houseNumber, String street, String country) {
+        this.action = action;
+        this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
@@ -25,8 +27,8 @@ public class User {
         this.country = country;
     }
 
-    public String getFirstmane() {
-        return firstmane;
+    public String getFirstname() {
+        return firstname;
     }
 
     public String getLastname() {

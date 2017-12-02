@@ -225,7 +225,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            User user = new User(firstName,lastName,email,password,city,houseNumber,street,country);
+            User user = new User("registration", firstName,lastName,email,password,city,houseNumber,street,country);
             mRegisterTask = new UserRegisterTask(user);
             mRegisterTask.execute((Void) null);
         }
@@ -355,7 +355,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
                 }
                 else{
                 apiService = RestClient.getClient().create(CredentialsAPIService.class);
-                credentials = registerUser("registration", user);
+                credentials = registerUser(user);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -378,7 +378,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
                 setResult(RESULT_OK, data);
                 finish();
             } else {
-                Toast toast = Toast.makeText(getApplicationContext(),R.string.timeout_warning,Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(),R.string.timeout_warning,Toast.LENGTH_LONG);
                 toast.show();
             }
         }
@@ -389,8 +389,8 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
             showProgress(false);
         }
 
-        private Credentials registerUser(String action, User user) throws IOException {
-            Call<Credentials> call = apiService.registerUser(action, user);
+        private Credentials registerUser(User user) throws IOException {
+            Call<Credentials> call = apiService.registerUser(user);
             return call.execute().body();
         }
     }

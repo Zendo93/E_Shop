@@ -11,9 +11,9 @@ import retrofit2.http.Query;
  */
 
 public interface CredentialsAPIService {
-    @GET("/User.php")
-    Call<Credentials> fetchCredentials(@Query("action") String login, @Query("email") String email, @Query("pass") String password);
+    @POST("/User.php")
+    Call<Credentials> fetchCredentials(@Body User user);
 
     @POST("/User.php")
-    Call<Credentials> registerUser(@Query("action") String registration, @Body User user);
+    Call<Credentials> registerUser(@Body User user);
 }
