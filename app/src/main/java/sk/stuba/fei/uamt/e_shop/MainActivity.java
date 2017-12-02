@@ -17,6 +17,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -26,10 +29,14 @@ public class MainActivity extends AppCompatActivity
     final int REQUEST_CODE_LOGIN = 1;
     final int REQUEST_CODE_REGISTRATION = 2;
     UIChanger uiChanger;
+    ProductsToShowTask mProductsToShowTask;
+    private String userEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -44,7 +51,12 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         handleIntent(getIntent());
+
         uiChanger = new UIChanger(navigationView);
+        LinearLayout products = (LinearLayout) findViewById(R.id.products);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.products_progress);
+        mProductsToShowTask = new ProductsToShowTask(this,uiChanger,products, progressBar);
+        mProductsToShowTask.execute((Void)null);
     }
 
     @Override
@@ -99,6 +111,7 @@ public class MainActivity extends AppCompatActivity
             startActivityForResult(intent, REQUEST_CODE_LOGIN);
         } else if ( id == R.id.nav_sign_out){
             uiChanger.changeUISignout();
+            userEmail = null;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -124,11 +137,13 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_LOGIN) {
             if (data.hasExtra("name") && data.hasExtra("email")) {
-               uiChanger.changeUISignIn(data);
+                uiChanger.changeUISignIn(data);
+                userEmail = data.getStringExtra("email");
             }
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_REGISTRATION){
             if (data.hasExtra("name") && data.hasExtra("email")) {
                 uiChanger.changeUISignIn(data);
+                userEmail = data.getStringExtra("email");
             }
         }
     }

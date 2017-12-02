@@ -1,11 +1,28 @@
 package sk.stuba.fei.uamt.e_shop;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.util.List;
 
 /**
  * Created by Zendo on 23.11.2017.
@@ -13,7 +30,6 @@ import android.widget.TextView;
 
 public class UIChanger {
     private NavigationView navigationView;
-    private boolean revertChanges;
 
     public UIChanger(NavigationView navigationView){
         this.navigationView = navigationView;
@@ -56,4 +72,113 @@ public class UIChanger {
 
     }
 
+    public LinearLayout generateProduct(Product product,Context context){
+
+        LinearLayout productLayout = new LinearLayout(context);
+        productLayout.setOrientation(LinearLayout.HORIZONTAL);
+        productLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        LinearLayout productChild1 = new LinearLayout(context);
+        productChild1.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams lpChild1_2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lpChild1_2.setMargins(dpToPx(context,10),dpToPx(context,10),dpToPx(context,10),dpToPx(context,10));
+        productChild1.setLayoutParams(lpChild1_2);
+
+        TextView productTitle = new TextView(context);
+        LinearLayout.LayoutParams lpProductTitle = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        productTitle.setText(product.getTitle());
+        productTitle.setLayoutParams(lpProductTitle);
+
+        TextView productDescription = new TextView(context);
+        LinearLayout.LayoutParams lpProductDescription = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        productDescription.setText("Popis: " + product.getDescription());
+        productDescription.setLayoutParams(lpProductDescription);
+
+        TextView productPrice = new TextView(context);
+        LinearLayout.LayoutParams lpProductPrice = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        productPrice.setText("Cena: " + product.getPrice() + " \u20ac");
+        productPrice.setLayoutParams(lpProductPrice);
+
+
+        //add productTitle, product description, productPrice
+        productChild1.addView(productTitle);
+        productChild1.addView(productDescription);
+        productChild1.addView(productPrice);
+
+
+        LinearLayout productChild2 = new LinearLayout(context);
+        productChild2.setOrientation(LinearLayout.VERTICAL);
+        productChild2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+
+        ImageButton selector = new ImageButton(context);
+        LinearLayout.LayoutParams lpSelector = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lpSelector.gravity = Gravity.END;
+        lpSelector.setMargins(0,dpToPx(context,5),0,0);
+        selector.setLayoutParams(lpSelector);
+        selector.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_more_vert));
+        selector.setId(Integer.parseInt(product.getID()));
+
+        TextView count = new TextView(context);
+        LinearLayout.LayoutParams lpCount = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lpCount.gravity = Gravity.END;
+        lpCount.setMargins(0,dpToPx(context,10),dpToPx(context,10),0);
+        count.setLayoutParams(lpCount);
+        count.setText("Na sklade: " + product.getCount());
+
+
+        //add selector, count
+        productChild2.addView(selector);
+        productChild2.addView(count);
+
+        //add prodcutChild1, productChild2
+        productLayout.addView(productChild1);
+        productLayout.addView(productChild2);
+
+        return productLayout;
+
+    }
+
+    public TextView generateLine(Context context){
+        TextView line = new TextView(context);
+        line.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+        line.setHeight(dpToPx(context,1));
+        line.setBackground(ContextCompat.getDrawable(context,R.color.grey));
+        return line;
+    }
+
+    private int dpToPx(Context context ,int dp) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    public void showProgress(final boolean show, final View productsLayout, final ProgressBar mProgressView) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = 200;
+
+            productsLayout.setVisibility(show ? View.GONE : View.VISIBLE);
+            productsLayout.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    productsLayout.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            productsLayout.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+    }
 }

@@ -8,15 +8,23 @@
     tools:context="sk.stuba.fei.uamt.e_shop.MainActivity"
     tools:showIn="@layout/app_bar_main"
     android:orientation="vertical">
-
+    <ProgressBar
+        android:id="@+id/products_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
+            android:id="@+id/products"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-                <LinearLayout
+
+                <!--LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -28,7 +36,11 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text=" Sharp UE55MU6192" />
+                            android:text="Sharp UE55MU6192" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Popis: Toto je televizor" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -36,7 +48,7 @@
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:orientation="vertical">
                         <ImageButton
                             android:layout_width="wrap_content"
@@ -44,13 +56,20 @@
                             android:background="@drawable/ic_more_vert"
                             android:layout_gravity="end"
                             android:layout_marginTop="5dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="10dp"
+                            android:text="Počet: 2" />
                     </LinearLayout>
                 </LinearLayout>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/grey"
-                    />
+                    /-->
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -21,24 +20,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -297,7 +290,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
-        private CredentialsAPIService apiService;
+        private APIService apiService;
         private Credentials credentials;
 
         UserLoginTask(String email, String password) {
@@ -309,7 +302,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Credentials doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
             try {
-                apiService = RestClient.getClient().create(CredentialsAPIService.class);
+                apiService = RestClient.getClient().create(APIService.class);
                 User user = new User("login","","",this.mEmail,this.mPassword,"","","","");
                  credentials = fetchCredentials(user);
             } catch (Exception e) {

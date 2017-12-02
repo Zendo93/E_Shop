@@ -338,7 +338,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
     public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
         private final User user;
-        private CredentialsAPIService apiService;
+        private APIService apiService;
         private Credentials credentials;
         UserRegisterTask(User user) {
             this.user = user;
@@ -354,7 +354,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderCal
                     return false;
                 }
                 else{
-                apiService = RestClient.getClient().create(CredentialsAPIService.class);
+                apiService = RestClient.getClient().create(APIService.class);
                 credentials = registerUser(user);
                 }
             } catch (IOException e) {
