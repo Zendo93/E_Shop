@@ -31,14 +31,18 @@ public class ProductsToShowTask extends AsyncTask<Void, Void, Boolean> {
     private LinearLayout productsLayout;
     private ProgressBar mProgressView;
     private String userEmail;
+    private String searchterm;
+    public ArrayList<String> dataList;
 
-    ProductsToShowTask(Context context, UIChanger uiChanger, LinearLayout productsLayout, ProgressBar mProgressView, String userEmail){
+    ProductsToShowTask(Context context, UIChanger uiChanger, LinearLayout productsLayout, ProgressBar mProgressView, String userEmail, String searchterm){
         this.context = context;
         products = new ArrayList<>();
         this.uiChanger = uiChanger;
         this.productsLayout = productsLayout;
         this.mProgressView = mProgressView;
         this.userEmail = userEmail;
+        this.searchterm = searchterm;
+        this.dataList = new ArrayList<String>();
     }
 
     @Override
@@ -77,6 +81,10 @@ public class ProductsToShowTask extends AsyncTask<Void, Void, Boolean> {
 
     private void displayProducts(){
         for (int i=0; i<products.size();i++){
+            dataList.add(products.get(i).getTitle());
+            if(searchterm != "" && !products.get(i).getTitle().toLowerCase().contains(searchterm.toLowerCase())) {
+                continue;
+            }
             productsLayout.addView(uiChanger.generateProduct(products.get(i), context, userEmail));
             productsLayout.addView(uiChanger.generateLine(context));
         }
