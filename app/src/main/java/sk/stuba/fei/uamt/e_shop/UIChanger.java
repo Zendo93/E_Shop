@@ -4,7 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -12,6 +15,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,6 +55,8 @@ public class UIChanger {
         item.setVisible(true);
         item = (MenuItem) hMenu.findItem(R.id.nav_shopping_cart);
         item.setVisible(true);
+        item = (MenuItem) hMenu.findItem(R.id.nav_my_orders);
+        item.setVisible(true);
     }
 
     public void changeUISignout(){
@@ -69,10 +75,12 @@ public class UIChanger {
         item.setVisible(false);
         item = (MenuItem) hMenu.findItem(R.id.nav_shopping_cart);
         item.setVisible(false);
+        item = (MenuItem) hMenu.findItem(R.id.nav_my_orders);
+        item.setVisible(false);
 
     }
 
-    public LinearLayout generateProduct(Product product,Context context){
+    public LinearLayout generateProduct(final Product product, final Context context, final String userEmail){
 
         LinearLayout productLayout = new LinearLayout(context);
         productLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -84,7 +92,7 @@ public class UIChanger {
         lpChild1_2.setMargins(dpToPx(context,10),dpToPx(context,10),dpToPx(context,10),dpToPx(context,10));
         productChild1.setLayoutParams(lpChild1_2);
 
-        TextView productTitle = new TextView(context);
+        final TextView productTitle = new TextView(context);
         LinearLayout.LayoutParams lpProductTitle = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         productTitle.setText(product.getTitle());
         productTitle.setLayoutParams(lpProductTitle);
@@ -94,7 +102,7 @@ public class UIChanger {
         productDescription.setText("Popis: " + product.getDescription());
         productDescription.setLayoutParams(lpProductDescription);
 
-        TextView productPrice = new TextView(context);
+        final TextView productPrice = new TextView(context);
         LinearLayout.LayoutParams lpProductPrice = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         productPrice.setText("Cena: " + product.getPrice() + " \u20ac");
         productPrice.setLayoutParams(lpProductPrice);
@@ -110,6 +118,14 @@ public class UIChanger {
         productChild2.setOrientation(LinearLayout.VERTICAL);
         productChild2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
 
+
+        final TextView count = new TextView(context);
+        LinearLayout.LayoutParams lpCount = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lpCount.gravity = Gravity.END;
+        lpCount.setMargins(0,dpToPx(context,10),dpToPx(context,10),0);
+        count.setLayoutParams(lpCount);
+        count.setText("Na sklade: " + product.getCount());
+
         ImageButton selector = new ImageButton(context);
         LinearLayout.LayoutParams lpSelector = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lpSelector.gravity = Gravity.END;
@@ -117,13 +133,17 @@ public class UIChanger {
         selector.setLayoutParams(lpSelector);
         selector.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_more_vert));
         selector.setId(Integer.parseInt(product.getID()));
+        if (userEmail != null && Integer.parseInt(product.getCount()) != 0) {
+            selector.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.e("selector", product.getTitle());
+                            generateOptionsForProduct(context, product.getTitle(), count, product.getID(), userEmail).show();
+                        }
+                    });
+        }
 
-        TextView count = new TextView(context);
-        LinearLayout.LayoutParams lpCount = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lpCount.gravity = Gravity.END;
-        lpCount.setMargins(0,dpToPx(context,10),dpToPx(context,10),0);
-        count.setLayoutParams(lpCount);
-        count.setText("Na sklade: " + product.getCount());
 
 
         //add selector, count
@@ -180,5 +200,24 @@ public class UIChanger {
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             productsLayout.setVisibility(show ? View.GONE : View.VISIBLE);
         }
+    }
+
+    private Dialog generateOptionsForProduct(final Context context, String productTitle, final TextView productCount, final String productId, final String userEmail){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(productTitle)
+                .setItems(R.array.options, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 1){
+                            createOrder(productCount,productId,userEmail,context);
+                        }
+                    }
+                });
+      return  builder.create();
+    }
+
+    private void createOrder(TextView productCount, String productId, String userEmail, Context context){
+        Order order = new Order("create-order",userEmail,productId);
+        MakeOrderTask mOderTask = new MakeOrderTask(context,productCount,order);
+        mOderTask.execute((Void)null);
     }
 }

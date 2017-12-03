@@ -22,4 +22,7 @@ public interface APIService {
 
     @GET("/product/Product.php")
     Call<List<Product>> getProducts(@Query("action") String action);
+
+    @POST("/product/Order.php")
+    Call<Void> createOrder(@Body Order order);
 }

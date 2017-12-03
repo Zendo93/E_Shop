@@ -1,5 +1,7 @@
 package sk.stuba.fei.uamt.e_shop;
 
+import android.app.Activity;
+import android.app.Instrumentation;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.Context;
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity
     UIChanger uiChanger;
     ProductsToShowTask mProductsToShowTask;
     private String userEmail;
+    private LinearLayout products;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +57,9 @@ public class MainActivity extends AppCompatActivity
         handleIntent(getIntent());
 
         uiChanger = new UIChanger(navigationView);
-        LinearLayout products = (LinearLayout) findViewById(R.id.products);
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.products_progress);
-        mProductsToShowTask = new ProductsToShowTask(this,uiChanger,products, progressBar);
+        products = (LinearLayout) findViewById(R.id.products);
+        progressBar = (ProgressBar) findViewById(R.id.products_progress);
+        mProductsToShowTask = new ProductsToShowTask(this,uiChanger,products, progressBar, userEmail);
         mProductsToShowTask.execute((Void)null);
     }
 
@@ -112,6 +116,7 @@ public class MainActivity extends AppCompatActivity
         } else if ( id == R.id.nav_sign_out){
             uiChanger.changeUISignout();
             userEmail = null;
+            reloadChanges(userEmail);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -139,12 +144,34 @@ public class MainActivity extends AppCompatActivity
             if (data.hasExtra("name") && data.hasExtra("email")) {
                 uiChanger.changeUISignIn(data);
                 userEmail = data.getStringExtra("email");
+                reloadChanges(userEmail);
             }
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_REGISTRATION){
             if (data.hasExtra("name") && data.hasExtra("email")) {
                 uiChanger.changeUISignIn(data);
                 userEmail = data.getStringExtra("email");
+                reloadChanges(userEmail);
             }
         }
+    }
+
+    /*@Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mProductsToShowTask.execute((Void)null);
+
+    }*/
+
+    /*@Override
+    protected void onResume() {
+        super.onResume();
+        reloadChanges();
+
+    }*/
+
+    private void reloadChanges(String userEmail){
+        products.removeAllViewsInLayout();
+        mProductsToShowTask = new ProductsToShowTask(this,uiChanger,products, progressBar, userEmail);
+        mProductsToShowTask.execute((Void)null);
     }
 }

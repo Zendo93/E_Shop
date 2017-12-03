@@ -30,18 +30,25 @@ public class ProductsToShowTask extends AsyncTask<Void, Void, Boolean> {
     private UIChanger uiChanger;
     private LinearLayout productsLayout;
     private ProgressBar mProgressView;
+    private String userEmail;
 
-    ProductsToShowTask(Context context, UIChanger uiChanger, LinearLayout productsLayout, ProgressBar mProgressView){
+    ProductsToShowTask(Context context, UIChanger uiChanger, LinearLayout productsLayout, ProgressBar mProgressView, String userEmail){
         this.context = context;
         products = new ArrayList<>();
         this.uiChanger = uiChanger;
         this.productsLayout = productsLayout;
         this.mProgressView = mProgressView;
+        this.userEmail = userEmail;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        uiChanger.showProgress(true, productsLayout, mProgressView);
     }
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        uiChanger.showProgress(true, productsLayout, mProgressView);
         apiService = RestClient.getClient().create(APIService.class);
         try {
             products = getProducts("get-products");
@@ -70,7 +77,7 @@ public class ProductsToShowTask extends AsyncTask<Void, Void, Boolean> {
 
     private void displayProducts(){
         for (int i=0; i<products.size();i++){
-            productsLayout.addView(uiChanger.generateProduct(products.get(i), context));
+            productsLayout.addView(uiChanger.generateProduct(products.get(i), context, userEmail));
             productsLayout.addView(uiChanger.generateLine(context));
         }
     }
