@@ -11,6 +11,7 @@ import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -122,7 +124,6 @@ public class MainActivity extends AppCompatActivity
         }
         if (searchView != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(MainActivity.this.getComponentName()));
-            searchView.setIconified(false);
             searchView.setSuggestionsAdapter(myAdapter);
             // Getting selected (clicked) item suggestion
             searchView.setOnCloseListener(new SearchView.OnCloseListener() {
@@ -130,6 +131,9 @@ public class MainActivity extends AppCompatActivity
                 public boolean onClose() {
                     searchterm = "";
                     reloadChanges(userEmail);
+                    invalidateOptionsMenu();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput (InputMethodManager.SHOW_FORCED, 0);
                     return true;
                 }
             });
