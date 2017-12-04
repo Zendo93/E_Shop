@@ -34,13 +34,13 @@
                         android:layout_margin="10dp"
                         android:orientation="vertical">
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="300dp"
                             android:layout_height="wrap_content"
                             android:text="Sharp UE55MU6192" />
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="300dp"
                             android:layout_height="wrap_content"
-                            android:text="Popis: Toto je televizor" />
+                            android:text="Popis: Toto je televizor kokot koni prejebanydgsnadglasdl" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

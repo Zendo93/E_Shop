@@ -97,12 +97,12 @@ public class UIChanger {
         productChild1.setLayoutParams(lpChild1_2);
 
         final TextView productTitle = new TextView(context);
-        LinearLayout.LayoutParams lpProductTitle = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lpProductTitle = new LinearLayout.LayoutParams(dpToPx(context,240), LinearLayout.LayoutParams.WRAP_CONTENT);
         productTitle.setText(product.getTitle());
         productTitle.setLayoutParams(lpProductTitle);
 
         TextView productDescription = new TextView(context);
-        LinearLayout.LayoutParams lpProductDescription = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lpProductDescription = new LinearLayout.LayoutParams(dpToPx(context,240), LinearLayout.LayoutParams.WRAP_CONTENT);
         productDescription.setText("Popis: " + product.getDescription());
         productDescription.setLayoutParams(lpProductDescription);
 
@@ -175,12 +175,12 @@ public class UIChanger {
         orderChild1.setLayoutParams(lpChild1_2);
 
         final TextView orderTitle = new TextView(context);
-        LinearLayout.LayoutParams lpProductTitle = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lpProductTitle = new LinearLayout.LayoutParams(dpToPx(context,240), LinearLayout.LayoutParams.WRAP_CONTENT);
         orderTitle.setText(order.getTitle());
         orderTitle.setLayoutParams(lpProductTitle);
 
         TextView orderDescription = new TextView(context);
-        LinearLayout.LayoutParams lpProductDescription = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lpProductDescription = new LinearLayout.LayoutParams(dpToPx(context,240), LinearLayout.LayoutParams.WRAP_CONTENT);
         orderDescription.setText("Popis: " + order.getDescription());
         orderDescription.setLayoutParams(lpProductDescription);
 
