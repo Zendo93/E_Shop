@@ -158,6 +158,84 @@ public class UIChanger {
 
     }
 
+    public LinearLayout generateOrder(final Orders order, final Context context, final String userEmail){
+
+        LinearLayout orderLayout = new LinearLayout(context);
+        orderLayout.setOrientation(LinearLayout.HORIZONTAL);
+        orderLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        LinearLayout orderChild1 = new LinearLayout(context);
+        orderChild1.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams lpChild1_2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lpChild1_2.setMargins(dpToPx(context,10),dpToPx(context,10),dpToPx(context,10),dpToPx(context,10));
+        orderChild1.setLayoutParams(lpChild1_2);
+
+        final TextView orderTitle = new TextView(context);
+        LinearLayout.LayoutParams lpProductTitle = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        orderTitle.setText(order.getTitle());
+        orderTitle.setLayoutParams(lpProductTitle);
+
+        TextView orderDescription = new TextView(context);
+        LinearLayout.LayoutParams lpProductDescription = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        orderDescription.setText("Popis: " + order.getDescription());
+        orderDescription.setLayoutParams(lpProductDescription);
+
+        /*final TextView productPrice = new TextView(context);
+        LinearLayout.LayoutParams lpProductPrice = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        productPrice.setText("Cena: " + order.getPrice() + " \u20ac");
+        productPrice.setLayoutParams(lpProductPrice);*/
+
+
+        //add productTitle, product description, productPrice
+        orderChild1.addView(orderTitle);
+        orderChild1.addView(orderDescription);
+       // productChild1.addView(productPrice);
+
+
+        LinearLayout orderChild2 = new LinearLayout(context);
+        orderChild2.setOrientation(LinearLayout.VERTICAL);
+        orderChild2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+
+
+        final TextView count = new TextView(context);
+        LinearLayout.LayoutParams lpCount = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lpCount.gravity = Gravity.END;
+        lpCount.setMargins(0,dpToPx(context,10),dpToPx(context,10),0);
+        count.setLayoutParams(lpCount);
+        count.setText("Počet: " + order.getItem_count());
+
+        /*ImageButton selector = new ImageButton(context);
+        LinearLayout.LayoutParams lpSelector = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lpSelector.gravity = Gravity.END;
+        lpSelector.setMargins(0,dpToPx(context,5),0,0);
+        selector.setLayoutParams(lpSelector);
+        selector.setBackground(ContextCompat.getDrawable(context,R.drawable.ic_more_vert));
+        selector.setId(Integer.parseInt(order.getID()));
+        if (userEmail != null && Integer.parseInt(order.getCount()) != 0) {
+            selector.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.e("selector", order.getTitle());
+                            generateOptionsForProduct(context, order.getTitle(), count, order.getID(), userEmail).show();
+                        }
+                    });
+        }*/
+
+
+
+        //add selector, count
+        //productChild2.addView(selector);
+        orderChild2.addView(count);
+
+        //add prodcutChild1, productChild2
+        orderLayout.addView(orderChild1);
+        orderLayout.addView(orderChild2);
+
+        return orderLayout;
+
+    }
+
     public TextView generateLine(Context context){
         TextView line = new TextView(context);
         line.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);

@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -212,6 +211,10 @@ public class MainActivity extends AppCompatActivity
             uiChanger.changeUISignout();
             userEmail = null;
             reloadChanges(userEmail);
+        } else if (id == R.id.nav_my_orders){
+            Intent intent = new Intent(this, MyOrdersActivity.class);
+            intent.putExtra("userEmail", userEmail);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -252,20 +255,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-
-    /*@Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mProductsToShowTask.execute((Void)null);
-
-    }*/
-
-    /*@Override
-    protected void onResume() {
-        super.onResume();
-        reloadChanges();
-
-    }*/
 
     private void reloadChanges(String userEmail){
         products.removeAllViewsInLayout();

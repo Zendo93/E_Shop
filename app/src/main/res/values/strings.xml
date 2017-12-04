@@ -32,4 +32,7 @@
     <string name="title_activity_login">Prihlásenie</string>
     <string name="timeout_warning">Operácia sa nepodarila. Skontrolujte si svoje internetové pripojenie</string>
     <string name="order_sucess">Product bol objednaný</string>
+
+    <!-- String related to MyOrders -->
+    <string name="title_activity_my_orders">Moje objednávky</string>
 </resources>

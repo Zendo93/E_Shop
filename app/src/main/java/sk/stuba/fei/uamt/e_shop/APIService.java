@@ -1,5 +1,7 @@
 package sk.stuba.fei.uamt.e_shop;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,4 +27,7 @@ public interface APIService {
 
     @POST("/product/Order.php")
     Call<Void> createOrder(@Body Order order);
+
+    @POST("/product/Order.php")
+    Call<List<Orders>> getMyOrders(@Body Credentials credentials);
 }
