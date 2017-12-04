@@ -53,8 +53,8 @@ public class UIChanger {
         item.setVisible(false);
         item = (MenuItem) hMenu.findItem(R.id.nav_sign_out);
         item.setVisible(true);
-        item = (MenuItem) hMenu.findItem(R.id.nav_shopping_cart);
-        item.setVisible(true);
+       /* item = (MenuItem) hMenu.findItem(R.id.nav_shopping_cart);
+        item.setVisible(true);*/
         item = (MenuItem) hMenu.findItem(R.id.nav_my_orders);
         item.setVisible(true);
         item = (MenuItem) hMenu.findItem(R.id.nav_change_my_data);
@@ -75,8 +75,8 @@ public class UIChanger {
         item.setVisible(true);
         item = (MenuItem) hMenu.findItem(R.id.nav_sign_out);
         item.setVisible(false);
-        item = (MenuItem) hMenu.findItem(R.id.nav_shopping_cart);
-        item.setVisible(false);
+        /*item = (MenuItem) hMenu.findItem(R.id.nav_shopping_cart);
+        item.setVisible(false);*/
         item = (MenuItem) hMenu.findItem(R.id.nav_my_orders);
         item.setVisible(false);
         item = (MenuItem) hMenu.findItem(R.id.nav_change_my_data);

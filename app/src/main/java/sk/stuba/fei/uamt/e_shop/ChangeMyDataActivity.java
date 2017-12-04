@@ -74,6 +74,7 @@ public class ChangeMyDataActivity extends AppCompatActivity implements LoaderCal
     private String zip;
     private String city;
     private String country;
+    private String houseNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,10 +89,17 @@ public class ChangeMyDataActivity extends AppCompatActivity implements LoaderCal
         mStreetView = (EditText) findViewById(R.id.user_street);
         mHouseNumberView = (EditText) findViewById(R.id.user_house_number);
 
-        firstName    = getIntent().getStringExtra("userName");
-        surname      = getIntent().getStringExtra("userSurname");
-        address      = getIntent().getStringExtra("userAddress");
-        zip          = getIntent().getStringExtra("userZip");
+        firstName = getIntent().getStringExtra("userName");
+        surname = getIntent().getStringExtra("userSurname");
+        //address = getIntent().getStringExtra("userAddress");
+        String adressArray[] = getIntent().getStringExtra("userAddress").split(" ");
+        if (adressArray.length > 1) {
+            address = adressArray[0];
+            houseNumber = adressArray[1];
+        } else{
+            address = adressArray[0];
+        }
+        zip          =  "";//getIntent().getStringExtra("userZip");
         city         = getIntent().getStringExtra("userCity");
         country      = getIntent().getStringExtra("userCountry");
 
@@ -100,7 +108,7 @@ public class ChangeMyDataActivity extends AppCompatActivity implements LoaderCal
         mStreetView.setText(address);
         mCountryView.setText(country);
         mCityView.setText(city);
-        mHouseNumberView.setText(zip);
+        mHouseNumberView.setText(houseNumber);
 
         Button mEmailRegisterButton = (Button) findViewById(R.id.email_register_button);
         mEmailRegisterButton.setOnClickListener(new OnClickListener() {
@@ -329,8 +337,8 @@ public class ChangeMyDataActivity extends AppCompatActivity implements LoaderCal
             this.user = user;
             firstName    = user.getFirstname();
             surname      = user.getLastname();
-            address      = user.getStreet();
-            zip          = user.getHouseNumber();
+            address      = user.getStreet() + " " + user.getHouseNumber();
+            zip          = "";
             city         = user.getCity();
             country      = user.getCountry();
         }

@@ -8,14 +8,14 @@
         android:id="@+id/nav_signIn"
         android:icon="@drawable/ic_menu_send"
         android:title="Prihlásiť sa" />
-    <item
+    <!--item
         android:id="@+id/nav_shopping_cart"
         android:icon="@drawable/ic_shopping_cart"
         android:title="Košík"
-        android:visible="false"/>
+        android:visible="false"/-->
     <item
         android:id="@+id/nav_change_my_data"
-        android:icon="@drawable/ic_assignment_black_24dp"
+        android:icon="@drawable/ic_create_black_24dp"
         android:title="Zmena mojich údajov"
         android:visible="false"/>
     <item
