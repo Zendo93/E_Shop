@@ -22,6 +22,9 @@ public interface APIService {
     @POST("/User.php")
     Call<Credentials> registerUser(@Body User user);
 
+    @POST("/User.php")
+    Call<Credentials> changeUserData(@Body User user);
+
     @GET("/product/Product.php")
     Call<List<Product>> getProducts(@Query("action") String action);
 

@@ -43,9 +43,19 @@ public class MainActivity extends AppCompatActivity
 
     final int REQUEST_CODE_LOGIN = 1;
     final int REQUEST_CODE_REGISTRATION = 2;
+    final int REQUEST_CODE_CHANGE_MY_DATA = 3;
     UIChanger uiChanger;
     ProductsToShowTask mProductsToShowTask;
     private String userEmail;
+    private String userName;
+    private String userSurname;
+    private String userStreet;
+    private String userAddress;
+    private String userCity;
+    private String userCountry;
+    private String userZip;
+
+
     private LinearLayout products;
     private ProgressBar progressBar;
     private String searchterm = "";
@@ -219,6 +229,17 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, MyOrdersActivity.class);
             intent.putExtra("userEmail", userEmail);
             startActivity(intent);
+        } else if (id == R.id.nav_change_my_data) {
+            Intent intent = new Intent(this, ChangeMyDataActivity.class);
+            intent.putExtra("userEmail", userEmail);
+            intent.putExtra("userName", userName);
+            intent.putExtra("userSurname", userSurname);
+            intent.putExtra("userAddress", userAddress);
+            intent.putExtra("userCity", userCity);
+            intent.putExtra("userCountry", userCountry);
+            intent.putExtra("userZip", userZip);
+
+            startActivityForResult(intent, REQUEST_CODE_CHANGE_MY_DATA);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -249,6 +270,12 @@ public class MainActivity extends AppCompatActivity
             if (data.hasExtra("name") && data.hasExtra("email")) {
                 uiChanger.changeUISignIn(data);
                 userEmail = data.getStringExtra("email");
+                userName = data.getStringExtra("first_name");
+                userSurname = data.getStringExtra("surname");
+                userAddress = data.getStringExtra("address");
+                userCity = data.getStringExtra("city");
+                userCountry = data.getStringExtra("country");
+                userZip = data.getStringExtra("zip");
                 reloadChanges(userEmail);
             }
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_REGISTRATION){
@@ -257,6 +284,20 @@ public class MainActivity extends AppCompatActivity
                 userEmail = data.getStringExtra("email");
                 reloadChanges(userEmail);
             }
+        } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_CHANGE_MY_DATA){
+            userEmail = data.getStringExtra("email");
+            userName = data.getStringExtra("userName");
+            userSurname = data.getStringExtra("userSurname");
+            userAddress = data.getStringExtra("userAddress");
+            userCity = data.getStringExtra("userCity");
+            userCountry = data.getStringExtra("userCountry");
+            userZip = data.getStringExtra("userZip");
+
+                uiChanger.changeUISignIn(data);
+
+
+                //reloadChanges(userEmail);
+
         }
     }
 

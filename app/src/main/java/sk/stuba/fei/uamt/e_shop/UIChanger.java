@@ -57,6 +57,8 @@ public class UIChanger {
         item.setVisible(true);
         item = (MenuItem) hMenu.findItem(R.id.nav_my_orders);
         item.setVisible(true);
+        item = (MenuItem) hMenu.findItem(R.id.nav_change_my_data);
+        item.setVisible(true);
     }
 
     public void changeUISignout(){
@@ -76,6 +78,8 @@ public class UIChanger {
         item = (MenuItem) hMenu.findItem(R.id.nav_shopping_cart);
         item.setVisible(false);
         item = (MenuItem) hMenu.findItem(R.id.nav_my_orders);
+        item.setVisible(false);
+        item = (MenuItem) hMenu.findItem(R.id.nav_change_my_data);
         item.setVisible(false);
 
     }

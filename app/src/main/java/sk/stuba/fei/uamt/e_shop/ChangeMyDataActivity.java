@@ -3,22 +3,20 @@ package sk.stuba.fei.uamt.e_shop;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,6 +24,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class ChangeMyDataActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -55,35 +55,63 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+    private UserRegisterTask mRegisterTask = null;
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
+    private EditText mFirstNameView;
+    private EditText mLastNameView;
+    private EditText mHouseNumberView;
+    private EditText mStreetView;
+    private EditText mCityView;
+    private EditText mCountryView;
     private View mProgressView;
-    private View mLoginFormView;
+    private View mRegisterFormView;
+    private String userEmail;
+
+    private String firstName;
+    private String surname;
+    private String address;
+    private String zip;
+    private String city;
+    private String country;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_change_my_data);
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
+        userEmail = getIntent().getStringExtra("userEmail");
+        mFirstNameView = (EditText) findViewById(R.id.user_firstname);
+        mLastNameView = (EditText) findViewById(R.id.user_lastname);
+        mCityView = (EditText) findViewById(R.id.user_city);
+        mCountryView = (EditText) findViewById(R.id.user_country);
+        mStreetView = (EditText) findViewById(R.id.user_street);
+        mHouseNumberView = (EditText) findViewById(R.id.user_house_number);
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        firstName    = getIntent().getStringExtra("userName");
+        surname      = getIntent().getStringExtra("userSurname");
+        address      = getIntent().getStringExtra("userAddress");
+        zip          = getIntent().getStringExtra("userZip");
+        city         = getIntent().getStringExtra("userCity");
+        country      = getIntent().getStringExtra("userCountry");
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        mFirstNameView.setText(firstName);
+        mLastNameView.setText(surname);
+        mStreetView.setText(address);
+        mCountryView.setText(country);
+        mCityView.setText(city);
+        mHouseNumberView.setText(zip);
+
+        Button mEmailRegisterButton = (Button) findViewById(R.id.email_register_button);
+        mEmailRegisterButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                attemptRegister();
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
-
+        mRegisterFormView = findViewById(R.id.register_form);
+        mProgressView = findViewById(R.id.register_progress);
     }
 
     private void populateAutoComplete() {
@@ -101,18 +129,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
+
         return false;
     }
 
@@ -135,37 +152,53 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
-        if (mAuthTask != null) {
+    private void attemptRegister() {
+        if (mRegisterTask != null) {
             return;
         }
 
         // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+        mFirstNameView.setError(null);
+        mLastNameView.setError(null);
+        mCityView.setError(null);
+        mCountryView.setError(null);
+        mHouseNumberView.setError(null);
+        mStreetView.setError(null);
 
-        // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        // Store values at the time of the register attempt.
+        String firstName = mFirstNameView.getText().toString();
+        String lastName = mLastNameView.getText().toString();
+        String city = mCityView.getText().toString();
+        String country = mCountryView.getText().toString();
+        String houseNumber = mHouseNumberView.getText().toString();
+        String street = mStreetView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for an empty password
-        if (TextUtils.isEmpty(password))
-        {
-            mPasswordView.setError(getString(R.string.error_field_required));
-            focusView = mPasswordView;
+        if (firstName.isEmpty()){
+            mCityView.setError(getString(R.string.error_field_required));
+            focusView = mCityView;
             cancel = true;
-        }
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+        } else if ( lastName.isEmpty()){
+            mFirstNameView.setError(getString(R.string.error_field_required));
+            focusView = mFirstNameView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+        } else if ( houseNumber.isEmpty()){
+            mLastNameView.setError(getString(R.string.error_field_required));
+            focusView = mLastNameView;
+            cancel = true;
+        } else if ( street.isEmpty()){
+            mCountryView.setError(getString(R.string.error_field_required));
+            focusView = mCountryView;
+            cancel = true;
+        } else if ( city.isEmpty()){
+            mHouseNumberView.setError(getString(R.string.error_field_required));
+            focusView = mHouseNumberView;
+            cancel = true;
+        }else if ( country.isEmpty()){
+            mStreetView.setError(getString(R.string.error_field_required));
+            focusView = mStreetView;
             cancel = true;
         }
 
@@ -177,8 +210,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            User user = new User("change-user-data", firstName,lastName,userEmail,"",city,houseNumber,street,country);
+            mRegisterTask = new UserRegisterTask(user);
+            mRegisterTask.execute((Void) null);
         }
     }
 
@@ -203,12 +237,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+            mRegisterFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mRegisterFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    mRegisterFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -224,7 +258,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mRegisterFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -265,10 +299,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
+                new ArrayAdapter<>(ChangeMyDataActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
-        mEmailView.setAdapter(adapter);
+        //mEmailView.setAdapter(adapter);
     }
 
 
@@ -286,65 +320,79 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Credentials, Credentials> {
+    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
-        private final String mPassword;
+        private final User user;
         private APIService apiService;
         private Credentials credentials;
-
-        UserLoginTask(String email, String password) {
-            this.mEmail = email;
-            this.mPassword = password;
+        UserRegisterTask(User user) {
+            this.user = user;
+            firstName    = user.getFirstname();
+            surname      = user.getLastname();
+            address      = user.getStreet();
+            zip          = user.getHouseNumber();
+            city         = user.getCity();
+            country      = user.getCountry();
         }
 
         @Override
-        protected Credentials doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
+
             try {
-                apiService = RestClient.getClient().create(APIService.class);
-                User user = new User("login","","",this.mEmail,this.mPassword,"","","","");
-                 credentials = fetchCredentials(user);
-            } catch (Exception e) {
-                return null;
+                if (user == null)
+                {
+                    return false;
+                }
+                else{
+                    apiService = RestClient.getClient().create(APIService.class);
+                    credentials = registerUser(user);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return  false;
             }
 
-            return credentials;
+            // TODO: register the new account here.
+            return true;
         }
 
         @Override
-        protected void onPostExecute(final Credentials credentials) {
-            mAuthTask = null;
+        protected void onPostExecute(final Boolean success) {
+            mRegisterTask = null;
             showProgress(false);
 
             if (credentials != null) {
                 Intent data = new Intent();
                 data.putExtra("name", credentials.getName() + " " + credentials.getSurname());
                 data.putExtra("email", credentials.getEmail());
-                data.putExtra("first_name", credentials.getName());
-                data.putExtra("surname", credentials.getSurname());
-                data.putExtra("address", credentials.getAddress());
-                data.putExtra("zip", credentials.getZip());
-                data.putExtra("city", credentials.getCity());
-                data.putExtra("country", credentials.getCountry());
+                data.putExtra("userEmail", userEmail);
+                data.putExtra("userName", firstName);
+                data.putExtra("userSurname", surname);
+                data.putExtra("userAddress", address);
+                data.putExtra("userCity", city);
+                data.putExtra("userCountry", country);
+                data.putExtra("userZip", zip);
                 setResult(RESULT_OK, data);
                 finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mEmailView.setError("Nesprávny email");
+                Toast toast = Toast.makeText(getApplicationContext(),R.string.timeout_warning,Toast.LENGTH_LONG);
+                toast.show();
             }
         }
 
         @Override
         protected void onCancelled() {
-            mAuthTask = null;
+            mRegisterTask = null;
             showProgress(false);
         }
 
-        private Credentials fetchCredentials(User user) throws IOException {
-            Call<Credentials> call = apiService.fetchCredentials(user);
+        private Credentials registerUser(User user) throws IOException {
+            Call<Credentials> call = apiService.changeUserData(user);
             return call.execute().body();
         }
     }
+
+
 }
 

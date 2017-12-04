@@ -14,6 +14,11 @@
         android:title="Košík"
         android:visible="false"/>
     <item
+        android:id="@+id/nav_change_my_data"
+        android:icon="@drawable/ic_assignment_black_24dp"
+        android:title="Zmena mojich údajov"
+        android:visible="false"/>
+    <item
         android:id="@+id/nav_my_orders"
         android:icon="@drawable/ic_my_orders"
         android:title="Moje objednávky"
